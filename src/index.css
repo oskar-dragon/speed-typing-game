@@ -45,6 +45,7 @@ button {
   border: none;
   border-radius: 7px;
   cursor: pointer;
+  scale: 1;
   transition: opacity 200ms ease-in-out;
 }
 
@@ -55,6 +56,10 @@ button:disabled {
 button:focus,
 button:hover {
   opacity: 1;
+}
+
+button:active {
+  transform: scale(0.98);
 }
 
 textarea {
