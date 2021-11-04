@@ -1,10 +1,32 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 export default function App() {
+  const STARTING_TIME = 5;
+
   const [words, setWords] = useState("");
-  const [time, setTime] = useState(15);
+  const [time, setTime] = useState(STARTING_TIME);
   const [isGameOn, setIsGameOn] = useState(false);
   const [wordCount, setWordCount] = useState(0);
+  const textAreaRef = useRef(null);
+
+  const startGame = () => {
+    setIsGameOn(true);
+    setTime(STARTING_TIME);
+    setWords("");
+    setWordCount(0);
+    textAreaRef.current.disabled = false;
+    textAreaRef.current.focus();
+  };
+
+  const endGame = () => {
+    setWordCount(calculateWordCount(words));
+  };
+
+  const calculateWordCount = text => {
+    const regex = /[^\w]/g;
+    const stringArr = text.trim().split(regex);
+    return stringArr.filter(word => word !== "").length;
+  };
 
   useEffect(() => {
     if (time > 0 && isGameOn) {
@@ -18,7 +40,7 @@ export default function App() {
     }
 
     if (time === 0 && !isGameOn) {
-      setWordCount(calculateWordCount(words));
+      endGame();
     }
   }, [time, isGameOn]);
 
@@ -26,23 +48,19 @@ export default function App() {
     setWords(e.target.value);
   };
 
-  const handleClick = () => {
-    setIsGameOn(prevState => !prevState);
-  };
-
-  const calculateWordCount = text => {
-    const regex = /[^\w]/g;
-    const stringArr = text.trim().split(regex);
-    return stringArr.filter(word => word !== "").length;
-  };
-
   return (
     <div className="container">
       <h1 className="game__title">Speed Typing App</h1>
-      <textarea onChange={handleChange} value={words} className="game__text" />
+      <textarea
+        ref={textAreaRef}
+        onChange={handleChange}
+        disabled={!isGameOn}
+        value={words}
+        className="game__text"
+      />
       <h4 className="game__timer">Time remaining: {time}</h4>
-      <button onClick={handleClick} className="game__btn">
-        {isGameOn ? "Stop" : "Start"}
+      <button onClick={startGame} disabled={isGameOn} className="game__btn">
+        Start
       </button>
       <h2 className="game__word-count">Word Count: {wordCount}</h2>
     </div>
