@@ -9,14 +9,13 @@
 - [Technologies Used](#technologies-used)
 - [Screenshots](#screenshots)
 - [Project Status](#project-status)
-- [Room for Improvement](#room-for-improvement)
 - [Author Info](#author-info)
 
 ## General Information
 
-This simple game is used to practice your speed typing. The rules area pretty straight forward. Once you press start, you've got 15 seconds to type in a sentence. Once time is up, you will see a number of words you've typed in.
+This simple game is used to practice your speed typing. The rules area pretty straight forward. Once you press start, a text will appear in an input field and you have tot type it in the exact same way that it appears on the screen. Once time is up, you will see a number of words you've typed in
 
-I have made this project with React in order to practice the hooks (useState, useEffect, useRef, custom hooks).
+I have made this project with React in order to practice the hooks (`useReducer`, `useEffect`, `useRef` and custom hooks).
 
 ## Technologies Used
 
@@ -28,18 +27,12 @@ I have made this project with React in order to practice the hooks (useState, us
 
 ## Project Status
 
-Project is: _in progress_.
-
-## Room for Improvement
-
-**Room for Improvement**:
-
-- Hooks could be moved to separate files
+Project is: _complete_.
 
 **To do**:
 
-[x] Generate random text that user needs to type in and check user's typing errors
-[] Control state by useReducer hook
+- [x] Generate random text that user needs to type in and check user's typing errors
+- [x] Control state by useReducer hook
 
 ## Author Info
 
