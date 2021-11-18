@@ -110,3 +110,19 @@ h4 {
   background: var(--clr-seconary);
   padding: 3em 0;
 }
+
+.game__text {
+  position: relative;
+}
+
+.game__text-overlay {
+  z-index: 9999;
+  position: relative;
+}
+
+.game__text-underlay {
+  position: absolute;
+  background: none;
+  left: 18.7%;
+  opacity: 0.25;
+}
