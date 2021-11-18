@@ -38,10 +38,8 @@ Project is: _in progress_.
 
 **To do**:
 
-- [] Add an option to change remaining time
-- [] Use sentence that user needs to type in and check for errors
-- [] Show previous score so users can check if they are making any improvements
-- [] Move hooks to separate files
+[x] Generate random text that user needs to type in and check user's typing errors
+[] Control state by useReducer hook
 
 ## Author Info
 
