@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React from "react";
 import useWordGame from "../hooks/useWordGame";
 
 export default function App() {
@@ -10,18 +10,26 @@ export default function App() {
     time,
     startGame,
     wordCount,
+    underlayText,
   } = useWordGame();
 
   return (
     <div className="container">
       <h1 className="game__title">Speed Typing App</h1>
-      <textarea
-        ref={textAreaRef}
-        onChange={handleChange}
-        disabled={!isGameOn}
-        value={words}
-        className="game__text"
-      />
+      <div className="game__text">
+        <textarea
+          ref={textAreaRef}
+          onChange={handleChange}
+          disabled={!isGameOn}
+          value={words}
+          className="game__text-overlay"
+        />
+        <textarea
+          disabled
+          value={underlayText}
+          className="game__text-underlay"
+        />
+      </div>
       <h4 className="game__timer">Time remaining: {time}</h4>
       <button onClick={startGame} disabled={isGameOn} className="game__btn">
         Start
