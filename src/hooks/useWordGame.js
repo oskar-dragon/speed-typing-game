@@ -1,13 +1,6 @@
-import { useState, useRef, useEffect } from "react";
+import { useRef, useEffect, useReducer } from "react";
 
-export default function useWordGame(defaultTimeValue = 5) {
-  // TODO: Convert State to useReducer
-  const [words, setWords] = useState("");
-  const [time, setTime] = useState(defaultTimeValue);
-  const [isGameOn, setIsGameOn] = useState(false);
-  const [wordCount, setWordCount] = useState(0);
-  const [underlayText, setUnderlayText] = useState("");
-  const textAreaRef = useRef(null);
+export default function useWordGame() {
   const underlayTexts = [
     "Let's get this one out of the way first. Coworking spaces have survived lockdown, with WeWork going public via a SPAC on October 21. WeWork has 56 locations across the UK and more than 250 in the US—including in department stores, though they're centered in big cities such as London and New York, as well as offices in Australia, South Africa, and beyond. An “all access” pass to a hot desk at multiple locations costs £299/$299 a month, though day passes are also available. There are other options for those who need extra flexibility. In New York, coworking spaces such as Bat Haus offer a few days a week or a set number of hours a month for half of what WeWork charges, while memberships at coworking networks such as Optix and Croissant can be budget ways of finding a desk where and when you need it.",
     "Simply put, blue light glasses are spectacles designed to filter out blue light from electronic devices – a part of the spectrum associated with irritation, eye fatigue and headaches. Almost all visible blue light rays are able to move through the cornea and lens of your eye to your retina – the area that transfers light information to our brain. Some experts believe that being exposed to too much of this high-energy light is harmful for the retina's light-sensitive cells. And some studies in animals also found other phototoxic retinal damage. ",
@@ -16,47 +9,73 @@ export default function useWordGame(defaultTimeValue = 5) {
     "Brazil, the world's largest coffee producer, was hit by a historic frost in July 2021. Temperatures in coffee fields dropped below zero and the beans became encased in ice. The cold snap came right after the worst drought the country had seen in almost a century, which had already weakened the coffee trees. As a result, the price of coffee has shot to a seven-year high in anticipation of a poor harvest next year. As a tropical crop that dislikes temperature variations and only grows in a narrow belt around the equator, coffee is extremely vulnerable to climate change. It is also contributing to it, because demand for coffee keeps rising worldwide, making it a key driver of deforestation. Add to the mix disease and pests, which have wiped out crops in many coffee growing regions, and it's easy to see why people are searching for alternative ways of growing coffee.",
   ];
 
-  const startGame = () => {
-    setIsGameOn(true);
-    setTime(defaultTimeValue);
-    pickRandomText();
-    setWords("");
-    setWordCount(0);
+  const [state, dispatch] = useReducer(
+    (state, action) => {
+      switch (action.type) {
+        case "START_GAME":
+          return {
+            ...state,
+            isGameOn: true,
+            time: 15,
+            words: "",
+            wordCount: 0,
+            underlayText:
+              underlayTexts[
+                Math.floor(Math.random() * underlayTexts.length) + 1
+              ],
+          };
+        case "UPDATE_WORDS":
+          return { ...state, words: action.value };
+        case "SET_PREVIOUS_WORDS":
+          return { ...state };
+        case "SET_TIME":
+          return { ...state, time: state.time - 1 };
+        case "TOGGLE_IS_GAME_ON":
+          return { ...state, isGameOn: action.value };
+        case "END_GAME":
+          return { ...state, wordCount: action.value };
+        case "SET_UNDERLAY_TEXT":
+          return { ...state, underlayText: action.value };
+        default:
+          return { state };
+      }
+    },
+    {
+      words: "",
+      time: 15,
+      isGameOn: false,
+      wordCount: 0,
+      underlayText: "",
+    }
+  );
+
+  const { words, time, isGameOn, wordCount, underlayText } = state;
+  const textAreaRef = useRef(null);
+
+  function startGame() {
+    dispatch({ type: "START_GAME" });
     textAreaRef.current.disabled = false;
     textAreaRef.current.focus();
-    console.log(underlayText);
-  };
+  }
 
-  const endGame = () => {
-    setWordCount(calculateWordCount(words));
-  };
+  function endGame() {
+    dispatch({ type: "END_GAME", value: calculateWordCount(words) });
+  }
 
-  const calculateWordCount = text => {
-    const regex = /[^\w]/g;
+  function calculateWordCount(text) {
+    const regex = /[\s]/g;
     const stringArr = text.trim().split(regex);
     return stringArr.filter(word => word !== "").length;
-  };
-
-  const pickRandomText = () => {
-    const randNum = Math.floor(Math.random() * underlayTexts.length) + 1;
-    setUnderlayText(prevUnderlayText => {
-      if (prevUnderlayText === underlayTexts[randNum]) {
-        pickRandomText();
-      } else {
-        return underlayTexts[randNum];
-      }
-    });
-  };
-
+  }
   useEffect(() => {
     if (time > 0 && isGameOn) {
       setTimeout(() => {
-        setTime(prevTime => prevTime - 1);
+        dispatch({ type: "SET_TIME" });
       }, 1000);
     }
 
     if (time === 0) {
-      setIsGameOn(false);
+      dispatch({ type: "TOGGLE_IS_GAME_ON", value: false });
     }
 
     if (time === 0 && !isGameOn) {
@@ -64,17 +83,17 @@ export default function useWordGame(defaultTimeValue = 5) {
     }
   }, [time, isGameOn]);
 
-  const handleChange = e => {
+  function handleChange(e) {
     const { value } = e.target;
 
     const lastLetterIndex = value.length;
     const slicedUnderlyText = underlayText.slice(0, lastLetterIndex);
     if (value === slicedUnderlyText) {
-      setWords(value);
+      dispatch({ type: "UPDATE_WORDS", value });
     } else {
-      setWords(prevWords => prevWords);
+      dispatch({ type: "SET_PREVIOUS_WORDS", value });
     }
-  };
+  }
 
   return {
     textAreaRef,
